@@ -1,0 +1,2 @@
+## AusPol Knowledge Graph
+The goal of this project is to build a web-scraper that scrapes the media releases of Australian Politicians and builds a knowledge graph from these to understand their views and beliefs.

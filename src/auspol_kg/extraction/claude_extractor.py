@@ -3,16 +3,8 @@ from typing import Any
 
 from anthropic import Anthropic
 
-from .models import KnowledgeGraph
-
-SYSTEM_PROMPT = """You are an expert knowledge graph extractor specialising in Australian politics.
-
-Given text from a media release, extract:
-
-1. ENTITIES with types: PERSON, ORG, GPE, MONEY, DATE, EVENT, LAW, INFRASTRUCTURE, NORP
-2. RELATIONS with types: FUNDS, ANNOUNCES, LOCATED_IN, INVOLVES, MANAGES, PART_OF, SUPPORTS, REPRESENTS, COSTS, BUILT_BY
-
-Be thorough but precise. Only extract what is explicitly stated or strongly implied."""
+from ..models import KnowledgeGraph
+from ..prompts import KG_SYSTEM_PROMPT
 
 
 def _add_additional_properties_false(schema: dict[str, Any]) -> dict[str, Any]:
@@ -30,16 +22,17 @@ def _add_additional_properties_false(schema: dict[str, Any]) -> dict[str, Any]:
 
 
 def extract_claude(
-    text: str, model: str = "claude-sonnet-4-5-20250514"
+    text: str, model: str = "claude-sonnet-4-5-20250514", system_prompt: str | None = None
 ) -> KnowledgeGraph:
     """Extract entities and relationships using Claude structured output."""
+    prompt = system_prompt or KG_SYSTEM_PROMPT
     client = Anthropic()
     schema = _add_additional_properties_false(KnowledgeGraph.model_json_schema())
 
     response = client.messages.create(
         model=model,
         max_tokens=4096,
-        system=SYSTEM_PROMPT,
+        system=prompt,
         messages=[
             {
                 "role": "user",

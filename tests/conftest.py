@@ -35,15 +35,15 @@ def sample_text() -> str:
 def sample_kg() -> KnowledgeGraph:
     return KnowledgeGraph(
         entities=[
-            Entity(name="Catherine King", entity_type="PERSON"),
-            Entity(name="Melbourne", entity_type="GPE"),
-            Entity(name="$5 billion", entity_type="MONEY"),
+            Entity(name="Catherine King", entity_type="Person"),
+            Entity(name="Melbourne", entity_type="Location"),
+            Entity(name="$5 billion", entity_type="Money"),
         ],
         relations=[
             Relation(
                 source="Catherine King",
                 target="Melbourne",
-                relation_type="CO_OCCURS_WITH",
+                relation_type="announce",
             ),
         ],
     )

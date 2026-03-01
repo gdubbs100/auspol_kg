@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 class Entity(BaseModel):
     name: str = Field(description="The canonical name of the entity")
     entity_type: str = Field(
-        description="Type: PERSON, ORG, GPE, MONEY, DATE, EVENT, LAW, INFRASTRUCTURE"
+        description="Type: Person, Organisation, Location, Money, Date, Event, Law, Infrastructure, Facility, Political Group"
     )
     description: str = Field(
         default="", description="Brief description of this entity in context"

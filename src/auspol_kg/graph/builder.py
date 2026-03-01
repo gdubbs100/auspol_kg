@@ -1,18 +1,18 @@
 import networkx as nx
 
-from .models import KnowledgeGraph
+from ..models import KnowledgeGraph
 
 ENTITY_COLORS: dict[str, str] = {
-    "PERSON": "#FF6B6B",
-    "ORG": "#4ECDC4",
-    "GPE": "#45B7D1",
-    "MONEY": "#96CEB4",
-    "DATE": "#FFEAA7",
-    "EVENT": "#DDA0DD",
-    "LAW": "#98D8C8",
-    "INFRASTRUCTURE": "#F7DC6F",
-    "NORP": "#BB8FCE",
-    "FAC": "#F0B27A",
+    "Person": "#FF6B6B",
+    "Organisation": "#4ECDC4",
+    "Location": "#45B7D1",
+    "Money": "#96CEB4",
+    "Date": "#FFEAA7",
+    "Event": "#DDA0DD",
+    "Law": "#98D8C8",
+    "Infrastructure": "#F7DC6F",
+    "Political Group": "#BB8FCE",
+    "Facility": "#F0B27A",
 }
 
 

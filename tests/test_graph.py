@@ -10,12 +10,12 @@ def test_builds_correct_node_count(sample_kg: KnowledgeGraph) -> None:
 def test_node_has_color(sample_kg: KnowledgeGraph) -> None:
     G = build_networkx_graph(sample_kg)
     node_data = G.nodes["Catherine King"]
-    assert node_data["color"] == ENTITY_COLORS["PERSON"]
+    assert node_data["color"] == ENTITY_COLORS["Person"]
 
 
 def test_skips_edges_with_missing_nodes() -> None:
     kg = KnowledgeGraph(
-        entities=[Entity(name="A", entity_type="PERSON")],
+        entities=[Entity(name="A", entity_type="Person")],
         relations=[Relation(source="A", target="MISSING", relation_type="X")],
     )
     G = build_networkx_graph(kg)

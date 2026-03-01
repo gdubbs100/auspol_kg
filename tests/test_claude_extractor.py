@@ -1,7 +1,7 @@
 import json
 from unittest.mock import MagicMock, patch
 
-from auspol_kg.claude_extractor import _add_additional_properties_false, extract_claude
+from auspol_kg.extraction.claude_extractor import _add_additional_properties_false, extract_claude
 from auspol_kg.models import KnowledgeGraph
 
 
@@ -53,7 +53,7 @@ def test_schema_helper_handles_items() -> None:
     assert schema["properties"]["things"]["items"]["additionalProperties"] is False
 
 
-@patch("auspol_kg.claude_extractor.Anthropic")
+@patch("auspol_kg.extraction.claude_extractor.Anthropic")
 def test_extract_claude_parses_response(mock_anthropic_cls: MagicMock) -> None:
     fake_kg = {
         "entities": [{"name": "Test", "entity_type": "PERSON", "description": ""}],

@@ -1,0 +1,179 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1>spaCy NER Knowledge Graph</h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1>spaCy NER Knowledge Graph</h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 750px;
+                 background-color: #FFFFFF;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+             #config {
+                 float: left;
+                 width: 400px;
+                 height: 600px;
+             }
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+            <div id="config"></div>
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#FF6B6B", "entity_type": "Person", "font": {"color": "#333333"}, "id": "Sunshine", "label": "Sunshine", "shape": "dot", "size": 10, "title": "Person"}, {"color": "#4ECDC4", "entity_type": "Organisation", "font": {"color": "#333333"}, "id": "Department of Infrastructure", "label": "Department of Infrastructure", "shape": "dot", "size": 10, "title": "Organisation"}, {"color": "#F0B27A", "entity_type": "Facility", "font": {"color": "#333333"}, "id": "Melbourne Airport", "label": "Melbourne Airport", "shape": "dot", "size": 10, "title": "Facility"}, {"color": "#FF6B6B", "entity_type": "Person", "font": {"color": "#333333"}, "id": "Catherine King", "label": "Catherine King", "shape": "dot", "size": 10, "title": "Person"}, {"color": "#BB8FCE", "entity_type": "Political Group", "font": {"color": "#333333"}, "id": "Victorian", "label": "Victorian", "shape": "dot", "size": 10, "title": "Political Group"}, {"color": "#FF6B6B", "entity_type": "Person", "font": {"color": "#333333"}, "id": "Gabrielle Williams", "label": "Gabrielle Williams", "shape": "dot", "size": 10, "title": "Person"}, {"color": "#FFEAA7", "entity_type": "Date", "font": {"color": "#333333"}, "id": "today", "label": "today", "shape": "dot", "size": 10, "title": "Date"}, {"color": "#96CEB4", "entity_type": "Money", "font": {"color": "#333333"}, "id": "$4.1 billion", "label": "$4.1 billion", "shape": "dot", "size": 10, "title": "Money"}, {"color": "#45B7D1", "entity_type": "Location", "font": {"color": "#333333"}, "id": "Bendigo", "label": "Bendigo", "shape": "dot", "size": 10, "title": "Location"}, {"color": "#45B7D1", "entity_type": "Location", "font": {"color": "#333333"}, "id": "Warrnambool", "label": "Warrnambool", "shape": "dot", "size": 10, "title": "Location"}, {"color": "#4ECDC4", "entity_type": "Organisation", "font": {"color": "#333333"}, "id": "Geelong", "label": "Geelong", "shape": "dot", "size": 10, "title": "Organisation"}, {"color": "#BB8FCE", "entity_type": "Political Group", "font": {"color": "#333333"}, "id": "Ballarat", "label": "Ballarat", "shape": "dot", "size": 10, "title": "Political Group"}, {"color": "#FF6B6B", "entity_type": "Person", "font": {"color": "#333333"}, "id": "Harriet Shing", "label": "Harriet Shing", "shape": "dot", "size": 10, "title": "Person"}, {"color": "#FF6B6B", "entity_type": "Person", "font": {"color": "#333333"}, "id": "Fraser", "label": "Fraser", "shape": "dot", "size": 10, "title": "Person"}, {"color": "#FF6B6B", "entity_type": "Person", "font": {"color": "#333333"}, "id": "Daniel Mulino", "label": "Daniel Mulino", "shape": "dot", "size": 10, "title": "Person"}, {"color": "#FF6B6B", "entity_type": "Person", "font": {"color": "#333333"}, "id": "Sunshine Station", "label": "Sunshine Station", "shape": "dot", "size": 10, "title": "Person"}, {"color": "#FFEAA7", "entity_type": "Date", "font": {"color": "#333333"}, "id": "decades", "label": "decades", "shape": "dot", "size": 10, "title": "Date"}, {"color": "#FF6B6B", "entity_type": "Person", "font": {"color": "#333333"}, "id": "Melton", "label": "Melton", "shape": "dot", "size": 10, "title": "Person"}, {"color": "#4ECDC4", "entity_type": "Organisation", "font": {"color": "#333333"}, "id": "Labor Governments", "label": "Labor Governments", "shape": "dot", "size": 10, "title": "Organisation"}, {"color": "#45B7D1", "entity_type": "Location", "font": {"color": "#333333"}, "id": "Victoria", "label": "Victoria", "shape": "dot", "size": 10, "title": "Location"}, {"color": "#45B7D1", "entity_type": "Location", "font": {"color": "#333333"}, "id": "Melbourne", "label": "Melbourne", "shape": "dot", "size": 10, "title": "Location"}, {"color": "#BB8FCE", "entity_type": "Political Group", "font": {"color": "#333333"}, "id": "Albanese", "label": "Albanese", "shape": "dot", "size": 10, "title": "Political Group"}, {"color": "#45B7D1", "entity_type": "Location", "font": {"color": "#333333"}, "id": "West Footscray and Albion", "label": "West Footscray and Albion", "shape": "dot", "size": 10, "title": "Location"}, {"color": "#FF6B6B", "entity_type": "Person", "font": {"color": "#333333"}, "id": "Tottenham Station", "label": "Tottenham Station", "shape": "dot", "size": 10, "title": "Person"}, {"color": "#F0B27A", "entity_type": "Facility", "font": {"color": "#333333"}, "id": "Sunbury Line", "label": "Sunbury Line", "shape": "dot", "size": 10, "title": "Facility"}, {"color": "#FF6B6B", "entity_type": "Person", "font": {"color": "#333333"}, "id": "Sarah Connolly", "label": "Sarah Connolly", "shape": "dot", "size": 10, "title": "Person"}, {"color": "#FF6B6B", "entity_type": "Person", "font": {"color": "#333333"}, "id": "Footscray Katie Hall", "label": "Footscray Katie Hall", "shape": "dot", "size": 10, "title": "Person"}, {"color": "#FF6B6B", "entity_type": "Person", "font": {"color": "#333333"}, "id": "Natalie Suleyman", "label": "Natalie Suleyman", "shape": "dot", "size": 10, "title": "Person"}, {"color": "#4ECDC4", "entity_type": "Organisation", "font": {"color": "#333333"}, "id": "Albion Station", "label": "Albion Station", "shape": "dot", "size": 10, "title": "Organisation"}, {"color": "#FFEAA7", "entity_type": "Date", "font": {"color": "#333333"}, "id": "Wednesday 25 February 2026", "label": "Wednesday 25 February 2026", "shape": "dot", "size": 10, "title": "Date"}, {"color": "#FF6B6B", "entity_type": "Person", "font": {"color": "#333333"}, "id": "Laverton Katie Hall", "label": "Laverton Katie Hall", "shape": "dot", "size": 10, "title": "Person"}, {"color": "#4ECDC4", "entity_type": "Organisation", "font": {"color": "#333333"}, "id": "Allan Government", "label": "Allan Government", "shape": "dot", "size": 10, "title": "Organisation"}, {"color": "#96CEB4", "entity_type": "Money", "font": {"color": "#333333"}, "id": "$143 million", "label": "$143 million", "shape": "dot", "size": 10, "title": "Money"}, {"color": "#FFEAA7", "entity_type": "Date", "font": {"color": "#333333"}, "id": "coming months", "label": "coming months", "shape": "dot", "size": 10, "title": "Date"}, {"color": "#FFEAA7", "entity_type": "Date", "font": {"color": "#333333"}, "id": "next year", "label": "next year", "shape": "dot", "size": 10, "title": "Date"}, {"color": "#4ECDC4", "entity_type": "Organisation", "font": {"color": "#333333"}, "id": "Metro Tunnel", "label": "Metro Tunnel", "shape": "dot", "size": 10, "title": "Organisation"}, {"color": "#4ECDC4", "entity_type": "Organisation", "font": {"color": "#333333"}, "id": "CCTV", "label": "CCTV", "shape": "dot", "size": 10, "title": "Organisation"}]);
+                  edges = new vis.DataSet([{"from": "Sunshine", "label": "stop", "title": "Sunshine | Ministers for the Department of Infrastructure\nSkip", "to": "Department of Infrastructure", "width": 1}, {"from": "Sunshine", "label": "work", "title": "Sunshine | Ministers for the Department of Infrastructure\nSkip to main content\nListen\nAirport Rail works start - first stop Sunshine\nWork to build the Melbourne Airport Rail Link", "to": "Melbourne Airport", "width": 1}, {"from": "Sunshine", "label": "release", "title": "Catherine King and Victorian Minister for Transport Infrastructure Gabrielle Williams today released early designs for the new Sunshine", "to": "Catherine King", "width": 1}, {"from": "Sunshine", "label": "release", "title": "Victorian Minister for Transport Infrastructure Gabrielle Williams today released early designs for the new Sunshine", "to": "Victorian", "width": 1}, {"from": "Sunshine", "label": "release", "title": "Gabrielle Williams today released early designs for the new Sunshine", "to": "Gabrielle Williams", "width": 1}, {"from": "Sunshine", "label": "release", "title": "today released early designs for the new Sunshine", "to": "today", "width": 1}, {"from": "Sunshine", "label": "untangle", "title": "$4.1 billion joint investment will untangle the complex rail junction at Sunshine", "to": "$4.1 billion", "width": 1}, {"from": "Sunshine", "label": "change", "title": "Bendigo, Warrnambool, Geelong and my hometown of Ballarat these upgrades to Sunshine", "to": "Bendigo", "width": 1}, {"from": "Sunshine", "label": "change", "title": "Warrnambool, Geelong and my hometown of Ballarat these upgrades to Sunshine", "to": "Warrnambool", "width": 1}, {"from": "Sunshine", "label": "change", "title": "Geelong and my hometown of Ballarat these upgrades to Sunshine", "to": "Geelong", "width": 1}, {"from": "Sunshine", "label": "change", "title": "Ballarat these upgrades to Sunshine", "to": "Ballarat", "width": 1}, {"from": "Sunshine", "label": "related_to", "title": "Harriet Shing:\n\u201cSunshine", "to": "Harriet Shing", "width": 1}, {"from": "Sunshine", "label": "transform", "title": "Fraser Daniel Mulino:\n\u201cThis investment will transform Sunshine Station into a genuine local hub \u2013 improving daily journeys, opening up new walking and cycling connections and creating a precinct that better serves Sunshine", "to": "Fraser", "width": 1}, {"from": "Sunshine", "label": "transform", "title": "Daniel Mulino:\n\u201cThis investment will transform Sunshine Station into a genuine local hub \u2013 improving daily journeys, opening up new walking and cycling connections and creating a precinct that better serves Sunshine", "to": "Daniel Mulino", "width": 1}, {"from": "Sunshine", "label": "transform", "title": "Sunshine Station into a genuine local hub \u2013 improving daily journeys, opening up new walking and cycling connections and creating a precinct that better serves Sunshine", "to": "Sunshine Station", "width": 1}, {"from": "Sunshine", "label": "serve", "title": "Sunshine residents, workers and businesses for decades", "to": "decades", "width": 1}, {"from": "Department of Infrastructure", "label": "work", "title": "the Department of Infrastructure\nSkip to main content\nListen\nAirport Rail works start - first stop Sunshine\nWork to build the Melbourne Airport Rail Link", "to": "Melbourne Airport", "width": 1}, {"from": "Melbourne Airport", "label": "create", "title": "the Melbourne Airport Rail Link (MARL) and future electrified Melton", "to": "Melton", "width": 1}, {"from": "Melbourne Airport", "label": "talk", "title": "Catherine King:\n\u201cA rail link to Melbourne Airport", "to": "Catherine King", "width": 1}, {"from": "Melbourne Airport", "label": "talk", "title": "Melbourne Airport has been talked about for as long as I can remember, but it has taken two Labor Governments", "to": "Labor Governments", "width": 1}, {"from": "Melbourne Airport", "label": "talk", "title": "Melbourne Airport has been talked about for as long as I can remember, but it has taken two Labor Governments working to together to get this started for the people of Victoria", "to": "Victoria", "width": 1}, {"from": "Melbourne Airport", "label": "deliver", "title": "Victorian Minister for Transport Infrastructure Gabrielle Williams:\n\u201cRebuilding Sunshine Station is the first stage of delivering Melbourne Airport Rail", "to": "Victorian", "width": 1}, {"from": "Melbourne Airport", "label": "deliver", "title": "Gabrielle Williams:\n\u201cRebuilding Sunshine Station is the first stage of delivering Melbourne Airport Rail", "to": "Gabrielle Williams", "width": 1}, {"from": "Melbourne Airport", "label": "deliver", "title": "Melbourne Airport Rail and it will help pave the way for more services across Melbourne", "to": "Melbourne", "width": 1}, {"from": "Albanese", "label": "get", "title": "Albanese and Allan Labor Governments", "to": "Labor Governments", "width": 1}, {"from": "Albanese", "label": "get", "title": "Albanese and Allan Labor Governments are getting on with the job of creating a direct, reliable and faster public transport link to the airport starting between West Footscray and Albion", "to": "West Footscray and Albion", "width": 1}, {"from": "Labor Governments", "label": "get", "title": "Allan Labor Governments are getting on with the job of creating a direct, reliable and faster public transport link to the airport starting between West Footscray and Albion", "to": "West Footscray and Albion", "width": 1}, {"from": "Labor Governments", "label": "announce", "title": "The Allan Labor Government today", "to": "today", "width": 1}, {"from": "Labor Governments", "label": "announce", "title": "The Allan Labor Government today also announced a brand new, fully accessible Tottenham Station", "to": "Tottenham Station", "width": 1}, {"from": "Labor Governments", "label": "announce", "title": "The Allan Labor Government today also announced a brand new, fully accessible Tottenham Station will also be built on the realigned Sunbury Line", "to": "Sunbury Line", "width": 1}, {"from": "Labor Governments", "label": "talk", "title": "Catherine King:\n\u201cA rail link to Melbourne Airport has been talked about for as long as I can remember, but it has taken two Labor Governments", "to": "Catherine King", "width": 1}, {"from": "Labor Governments", "label": "work", "title": "Labor Governments working to together to get this started for the people of Victoria", "to": "Victoria", "width": 1}, {"from": "Catherine King", "label": "release", "title": "Catherine King and Victorian", "to": "Victorian", "width": 1}, {"from": "Catherine King", "label": "release", "title": "Catherine King and Victorian Minister for Transport Infrastructure Gabrielle Williams", "to": "Gabrielle Williams", "width": 1}, {"from": "Catherine King", "label": "release", "title": "Catherine King and Victorian Minister for Transport Infrastructure Gabrielle Williams today", "to": "today", "width": 1}, {"from": "Catherine King", "label": "talk", "title": "Catherine King:\n\u201cA rail link to Melbourne Airport has been talked about for as long as I can remember, but it has taken two Labor Governments working to together to get this started for the people of Victoria", "to": "Victoria", "width": 1}, {"from": "Victorian", "label": "release", "title": "Victorian Minister for Transport Infrastructure Gabrielle Williams", "to": "Gabrielle Williams", "width": 1}, {"from": "Victorian", "label": "release", "title": "Victorian Minister for Transport Infrastructure Gabrielle Williams today", "to": "today", "width": 1}, {"from": "Victorian", "label": "pave", "title": "Victorian Minister for Transport Infrastructure Gabrielle Williams:\n\u201cRebuilding Sunshine Station is the first stage of delivering Melbourne Airport Rail and it will help pave the way for more services across Melbourne", "to": "Melbourne", "width": 1}, {"from": "Victorian", "label": "related_to", "title": "Victorian Minister for Development Victoria and Precincts Harriet Shing", "to": "Harriet Shing", "width": 1}, {"from": "Victorian", "label": "make", "title": "Victorian Member for Laverton Sarah Connolly", "to": "Sarah Connolly", "width": 1}, {"from": "Victorian", "label": "make", "title": "Victorian Member for Laverton Sarah Connolly:\n\u201cThe Sunshine Station upgrades will make it easier for people to access a revitalised Sunshine Station", "to": "Sunshine Station", "width": 1}, {"from": "Victorian", "label": "thrill", "title": "Victorian Member for Footscray Katie Hall", "to": "Footscray Katie Hall", "width": 1}, {"from": "Victorian", "label": "thrill", "title": "Victorian Member for Footscray Katie Hall:\n\u201cThe community will be thrilled the project now includes a brand-new Tottenham Station", "to": "Tottenham Station", "width": 1}, {"from": "Victorian", "label": "related_to", "title": "Victorian Member for St Albans Natalie Suleyman", "to": "Natalie Suleyman", "width": 1}, {"from": "Victorian", "label": "related_to", "title": "Victorian Member for St Albans Natalie Suleyman:\n\"The brand-new Albion Station", "to": "Albion Station", "width": 1}, {"from": "Victorian", "label": "related_to", "title": "Wednesday 25 February 2026\nJoint Release with\nDaniel Mulino\nFederal Member for Fraser\nGabrielle Williams\nVictorian Minister for Transport Infrastructure\nHarriet Shing\nVictorian", "to": "Wednesday 25 February 2026", "width": 1}, {"from": "Victorian", "label": "related_to", "title": "Daniel Mulino\nFederal Member for Fraser\nGabrielle Williams\nVictorian Minister for Transport Infrastructure\nHarriet Shing\nVictorian", "to": "Daniel Mulino", "width": 1}, {"from": "Victorian", "label": "related_to", "title": "Fraser\nGabrielle Williams\nVictorian Minister for Transport Infrastructure\nHarriet Shing\nVictorian", "to": "Fraser", "width": 1}, {"from": "Victorian", "label": "related_to", "title": "Victorian Minister for Development Victoria and Precincts\nSarah Connolly\nState Member for Laverton\nKatie Hall\nState", "to": "Laverton Katie Hall", "width": 1}, {"from": "Gabrielle Williams", "label": "release", "title": "Gabrielle Williams today", "to": "today", "width": 1}, {"from": "Gabrielle Williams", "label": "pave", "title": "Gabrielle Williams:\n\u201cRebuilding Sunshine Station is the first stage of delivering Melbourne Airport Rail and it will help pave the way for more services across Melbourne", "to": "Melbourne", "width": 1}, {"from": "Gabrielle Williams", "label": "related_to", "title": "Wednesday 25 February 2026\nJoint Release with\nDaniel Mulino\nFederal Member for Fraser\nGabrielle Williams\nVictorian", "to": "Wednesday 25 February 2026", "width": 1}, {"from": "Gabrielle Williams", "label": "related_to", "title": "Daniel Mulino\nFederal Member for Fraser\nGabrielle Williams\nVictorian", "to": "Daniel Mulino", "width": 1}, {"from": "Gabrielle Williams", "label": "related_to", "title": "Fraser\nGabrielle Williams\nVictorian", "to": "Fraser", "width": 1}, {"from": "Gabrielle Williams", "label": "related_to", "title": "Gabrielle Williams\nVictorian Minister for Transport Infrastructure\nHarriet Shing", "to": "Harriet Shing", "width": 1}, {"from": "Gabrielle Williams", "label": "related_to", "title": "Gabrielle Williams\nVictorian Minister for Transport Infrastructure\nHarriet Shing\nVictorian Minister for Development Victoria and Precincts\nSarah Connolly\nState", "to": "Sarah Connolly", "width": 1}, {"from": "Gabrielle Williams", "label": "related_to", "title": "Gabrielle Williams\nVictorian Minister for Transport Infrastructure\nHarriet Shing\nVictorian Minister for Development Victoria and Precincts\nSarah Connolly\nState Member for Laverton\nKatie Hall\nState", "to": "Laverton Katie Hall", "width": 1}, {"from": "Gabrielle Williams", "label": "related_to", "title": "Gabrielle Williams\nVictorian Minister for Transport Infrastructure\nHarriet Shing\nVictorian Minister for Development Victoria and Precincts\nSarah Connolly\nState Member for Laverton\nKatie Hall\nState Member for Footscray\nNatalie Suleyman", "to": "Natalie Suleyman", "width": 1}, {"from": "today", "label": "announce", "title": "today also announced a brand new, fully accessible Tottenham Station", "to": "Tottenham Station", "width": 1}, {"from": "today", "label": "announce", "title": "today also announced a brand new, fully accessible Tottenham Station will also be built on the realigned Sunbury Line", "to": "Sunbury Line", "width": 1}, {"from": "Sunshine Station", "label": "transform", "title": "Fraser Daniel Mulino:\n\u201cThis investment will transform Sunshine Station", "to": "Fraser", "width": 1}, {"from": "Sunshine Station", "label": "transform", "title": "Daniel Mulino:\n\u201cThis investment will transform Sunshine Station", "to": "Daniel Mulino", "width": 1}, {"from": "Sunshine Station", "label": "transform", "title": "Sunshine Station into a genuine local hub \u2013 improving daily journeys, opening up new walking and cycling connections and creating a precinct that better serves Sunshine residents, workers and businesses for decades", "to": "decades", "width": 1}, {"from": "Sunshine Station", "label": "make", "title": "Laverton Sarah Connolly:\n\u201cThe Sunshine Station upgrades will make it easier for people to access a revitalised Sunshine Station", "to": "Sarah Connolly", "width": 1}, {"from": "Allan Government", "label": "invest", "title": "The Allan Government is also investing $143 million", "to": "$143 million", "width": 1}, {"from": "Tottenham Station", "label": "build", "title": "Tottenham Station will also be built on the realigned Sunbury Line", "to": "Sunbury Line", "width": 1}, {"from": "Tottenham Station", "label": "thrill", "title": "Footscray Katie Hall:\n\u201cThe community will be thrilled the project now includes a brand-new Tottenham Station", "to": "Footscray Katie Hall", "width": 1}, {"from": "coming months", "label": "release", "title": "the coming months and construction to begin next year", "to": "next year", "width": 1}, {"from": "Bendigo", "label": "change", "title": "Bendigo, Warrnambool", "to": "Warrnambool", "width": 1}, {"from": "Bendigo", "label": "change", "title": "Bendigo, Warrnambool, Geelong", "to": "Geelong", "width": 1}, {"from": "Bendigo", "label": "change", "title": "Bendigo, Warrnambool, Geelong and my hometown of Ballarat", "to": "Ballarat", "width": 1}, {"from": "Warrnambool", "label": "change", "title": "Warrnambool, Geelong", "to": "Geelong", "width": 1}, {"from": "Warrnambool", "label": "change", "title": "Warrnambool, Geelong and my hometown of Ballarat", "to": "Ballarat", "width": 1}, {"from": "Geelong", "label": "change", "title": "Geelong and my hometown of Ballarat", "to": "Ballarat", "width": 1}, {"from": "Harriet Shing", "label": "related_to", "title": "Wednesday 25 February 2026\nJoint Release with\nDaniel Mulino\nFederal Member for Fraser\nGabrielle Williams\nVictorian Minister for Transport Infrastructure\nHarriet Shing", "to": "Wednesday 25 February 2026", "width": 1}, {"from": "Harriet Shing", "label": "related_to", "title": "Daniel Mulino\nFederal Member for Fraser\nGabrielle Williams\nVictorian Minister for Transport Infrastructure\nHarriet Shing", "to": "Daniel Mulino", "width": 1}, {"from": "Harriet Shing", "label": "related_to", "title": "Fraser\nGabrielle Williams\nVictorian Minister for Transport Infrastructure\nHarriet Shing", "to": "Fraser", "width": 1}, {"from": "Harriet Shing", "label": "related_to", "title": "Harriet Shing\nVictorian Minister for Development Victoria and Precincts\nSarah Connolly\nState", "to": "Sarah Connolly", "width": 1}, {"from": "Harriet Shing", "label": "related_to", "title": "Harriet Shing\nVictorian Minister for Development Victoria and Precincts\nSarah Connolly\nState Member for Laverton\nKatie Hall\nState", "to": "Laverton Katie Hall", "width": 1}, {"from": "Harriet Shing", "label": "related_to", "title": "Harriet Shing\nVictorian Minister for Development Victoria and Precincts\nSarah Connolly\nState Member for Laverton\nKatie Hall\nState Member for Footscray\nNatalie Suleyman", "to": "Natalie Suleyman", "width": 1}, {"from": "Fraser", "label": "transform", "title": "Fraser Daniel Mulino", "to": "Daniel Mulino", "width": 1}, {"from": "Fraser", "label": "transform", "title": "Fraser Daniel Mulino:\n\u201cThis investment will transform Sunshine Station into a genuine local hub \u2013 improving daily journeys, opening up new walking and cycling connections and creating a precinct that better serves Sunshine residents, workers and businesses for decades", "to": "decades", "width": 1}, {"from": "Fraser", "label": "related_to", "title": "Wednesday 25 February 2026\nJoint Release with\nDaniel Mulino\nFederal Member for Fraser", "to": "Wednesday 25 February 2026", "width": 1}, {"from": "Fraser", "label": "related_to", "title": "Fraser\nGabrielle Williams\nVictorian Minister for Transport Infrastructure\nHarriet Shing\nVictorian Minister for Development Victoria and Precincts\nSarah Connolly\nState", "to": "Sarah Connolly", "width": 1}, {"from": "Fraser", "label": "related_to", "title": "Fraser\nGabrielle Williams\nVictorian Minister for Transport Infrastructure\nHarriet Shing\nVictorian Minister for Development Victoria and Precincts\nSarah Connolly\nState Member for Laverton\nKatie Hall\nState", "to": "Laverton Katie Hall", "width": 1}, {"from": "Fraser", "label": "related_to", "title": "Fraser\nGabrielle Williams\nVictorian Minister for Transport Infrastructure\nHarriet Shing\nVictorian Minister for Development Victoria and Precincts\nSarah Connolly\nState Member for Laverton\nKatie Hall\nState Member for Footscray\nNatalie Suleyman", "to": "Natalie Suleyman", "width": 1}, {"from": "Daniel Mulino", "label": "transform", "title": "Daniel Mulino:\n\u201cThis investment will transform Sunshine Station into a genuine local hub \u2013 improving daily journeys, opening up new walking and cycling connections and creating a precinct that better serves Sunshine residents, workers and businesses for decades", "to": "decades", "width": 1}, {"from": "Daniel Mulino", "label": "related_to", "title": "Wednesday 25 February 2026\nJoint Release with\nDaniel Mulino", "to": "Wednesday 25 February 2026", "width": 1}, {"from": "Daniel Mulino", "label": "related_to", "title": "Daniel Mulino\nFederal Member for Fraser\nGabrielle Williams\nVictorian Minister for Transport Infrastructure\nHarriet Shing\nVictorian Minister for Development Victoria and Precincts\nSarah Connolly\nState", "to": "Sarah Connolly", "width": 1}, {"from": "Daniel Mulino", "label": "related_to", "title": "Daniel Mulino\nFederal Member for Fraser\nGabrielle Williams\nVictorian Minister for Transport Infrastructure\nHarriet Shing\nVictorian Minister for Development Victoria and Precincts\nSarah Connolly\nState Member for Laverton\nKatie Hall\nState", "to": "Laverton Katie Hall", "width": 1}, {"from": "Daniel Mulino", "label": "related_to", "title": "Daniel Mulino\nFederal Member for Fraser\nGabrielle Williams\nVictorian Minister for Transport Infrastructure\nHarriet Shing\nVictorian Minister for Development Victoria and Precincts\nSarah Connolly\nState Member for Laverton\nKatie Hall\nState Member for Footscray\nNatalie Suleyman", "to": "Natalie Suleyman", "width": 1}, {"from": "Sarah Connolly", "label": "related_to", "title": "Wednesday 25 February 2026\nJoint Release with\nDaniel Mulino\nFederal Member for Fraser\nGabrielle Williams\nVictorian Minister for Transport Infrastructure\nHarriet Shing\nVictorian Minister for Development Victoria and Precincts\nSarah Connolly\nState", "to": "Wednesday 25 February 2026", "width": 1}, {"from": "Sarah Connolly", "label": "related_to", "title": "Sarah Connolly\nState Member for Laverton\nKatie Hall\nState", "to": "Laverton Katie Hall", "width": 1}, {"from": "Sarah Connolly", "label": "related_to", "title": "Sarah Connolly\nState Member for Laverton\nKatie Hall\nState Member for Footscray\nNatalie Suleyman", "to": "Natalie Suleyman", "width": 1}, {"from": "Natalie Suleyman", "label": "related_to", "title": "St Albans Natalie Suleyman:\n\"The brand-new Albion Station", "to": "Albion Station", "width": 1}, {"from": "Natalie Suleyman", "label": "related_to", "title": "Wednesday 25 February 2026\nJoint Release with\nDaniel Mulino\nFederal Member for Fraser\nGabrielle Williams\nVictorian Minister for Transport Infrastructure\nHarriet Shing\nVictorian Minister for Development Victoria and Precincts\nSarah Connolly\nState Member for Laverton\nKatie Hall\nState Member for Footscray\nNatalie Suleyman", "to": "Wednesday 25 February 2026", "width": 1}, {"from": "Natalie Suleyman", "label": "related_to", "title": "Laverton\nKatie Hall\nState Member for Footscray\nNatalie Suleyman", "to": "Laverton Katie Hall", "width": 1}, {"from": "Wednesday 25 February 2026", "label": "related_to", "title": "Wednesday 25 February 2026\nJoint Release with\nDaniel Mulino\nFederal Member for Fraser\nGabrielle Williams\nVictorian Minister for Transport Infrastructure\nHarriet Shing\nVictorian Minister for Development Victoria and Precincts\nSarah Connolly\nState Member for Laverton\nKatie Hall\nState", "to": "Laverton Katie Hall", "width": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": true,
+        "filter": [
+            "physics"
+        ]
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "forceAtlas2Based": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.01,
+            "damping": 0.4,
+            "gravitationalConstant": -50,
+            "springConstant": 0.08,
+            "springLength": 100
+        },
+        "solver": "forceAtlas2Based",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+                  // if this network requires displaying the configure window,
+                  // put it in its div
+                  options.configure["container"] = document.getElementById("config");
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

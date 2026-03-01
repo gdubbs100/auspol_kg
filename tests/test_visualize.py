@@ -1,8 +1,7 @@
 from pathlib import Path
 
-from auspol_kg.graph import build_networkx_graph
+from auspol_kg.graph import build_networkx_graph, create_comparison_html, visualize_graph
 from auspol_kg.models import KnowledgeGraph
-from auspol_kg.visualize import create_comparison_html, visualize_graph
 
 
 def test_visualize_creates_html(sample_kg: KnowledgeGraph, tmp_path: Path) -> None:

@@ -26,9 +26,11 @@ def visualize_graph(
 
 
 def create_comparison_html(
-    spacy_html_path: Path,
-    claude_html_path: Path,
+    left_html_path: Path,
+    right_html_path: Path,
     output_path: str | Path,
+    left_title: str = "spaCy NER + Dependency Parsing",
+    right_title: str = "Cohere LLM Extraction",
 ) -> Path:
     """Create a side-by-side comparison page embedding both graphs."""
     output_path = Path(output_path)
@@ -47,12 +49,12 @@ def create_comparison_html(
 <body>
     <div class="container">
         <div class="panel">
-            <h2>spaCy NER + Co-occurrence</h2>
-            <iframe src="{spacy_html_path.name}"></iframe>
+            <h2>{left_title}</h2>
+            <iframe src="{left_html_path.name}"></iframe>
         </div>
         <div class="panel">
-            <h2>Claude API Extraction</h2>
-            <iframe src="{claude_html_path.name}"></iframe>
+            <h2>{right_title}</h2>
+            <iframe src="{right_html_path.name}"></iframe>
         </div>
     </div>
 </body>

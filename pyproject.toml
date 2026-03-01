@@ -13,6 +13,7 @@ dependencies = [
     "pyvis>=0.3",
     "pydantic>=2.0",
     "python-dotenv>=1.0",
+    "cohere>=5.0",
 ]
 
 [build-system]

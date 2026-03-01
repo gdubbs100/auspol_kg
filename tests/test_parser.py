@@ -1,4 +1,4 @@
-from auspol_kg.parser import parse_html
+from auspol_kg.extraction import parse_html
 
 
 def test_strips_scripts_and_nav(sample_html: str) -> None:
